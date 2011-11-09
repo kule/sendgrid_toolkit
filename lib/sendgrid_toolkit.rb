@@ -12,4 +12,5 @@ require 'sendgrid_toolkit/mail'
 
 module SendgridToolkit
   BASE_URI = "sendgrid.com/api"
+  BASE_URI_V2 = "sendgrid.com/apiv2"
 end
