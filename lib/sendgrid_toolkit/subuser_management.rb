@@ -1,11 +1,15 @@
 module SendgridToolkit
   class SubuserManagement < AbstractSendgridClient
-    
+    include SendgridToolkit::SubuserEventNotification
+    include SendgridToolkit::SubuserWhitelabel
+    include SendgridToolkit::SubuserIpManagement
+    include SendgridToolkit::SubuserFilters
+      
     def initialize(api_user = nil, api_key = nil)
       super
       @base_uri = BASE_URI_V2
     end
-    
+
     def retrieve(options = {})
       options.merge! :task => 'get'
       response = api_post('customer', 'profile', options)

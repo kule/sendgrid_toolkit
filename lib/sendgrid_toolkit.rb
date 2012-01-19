@@ -9,8 +9,11 @@ require 'sendgrid_toolkit/spam_reports'
 require 'sendgrid_toolkit/bounces'
 require 'sendgrid_toolkit/invalid_emails'
 require 'sendgrid_toolkit/mail'
+require 'sendgrid_toolkit/subuser_event_notification'
+require 'sendgrid_toolkit/subuser_filters'
+require 'sendgrid_toolkit/subuser_ip_management'
+require 'sendgrid_toolkit/subuser_whitelabel'
 require 'sendgrid_toolkit/subuser_management'
-require 'sendgrid_toolkit/ip_management'
 
 module SendgridToolkit
   BASE_URI = "sendgrid.com/api"
