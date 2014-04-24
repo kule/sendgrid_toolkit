@@ -13,8 +13,27 @@ module SendgridToolkit
 
     protected
 
+    def api_get(module_name, action_name, opts = {})
+      make_request(:get, module_name, action_name, opts)
+    end
+
     def api_post(module_name, action_name, opts = {})
-      response = HTTParty.post("https://#{@base_uri}/#{module_name}.#{action_name}.json?", :query => get_credentials.merge(opts), :format => :json)
+      make_request(:post, module_name, action_name, opts)
+    end
+
+    def get_credentials
+      {:api_user => @api_user, :api_key => @api_key}
+    end
+
+    private
+
+    def make_request(request_type, module_name, action_name, opts)
+      url = "https://#{@base_uri}/#{module_name}.#{action_name}.json?"
+      if request_type == :get
+        response = HTTParty.get(url, :query => get_credentials.merge(opts), :format => :json)
+      else
+        response = HTTParty.post(url, :query => get_credentials.merge(opts), :format => :json)
+      end
       if response.code > 401
         raise(SendgridToolkit::SendgridServerError, "The sengrid server returned an error. #{response.inspect}")
       elsif has_error?(response) and
@@ -23,16 +42,12 @@ module SendgridToolkit
           response['error']['code'].to_i == 401
         raise SendgridToolkit::AuthenticationFailed
       elsif has_error?(response)
+        puts url + get_credentials.merge(opts).map{|k,v| "#{k}=#{v}"}.join('&')
         raise(SendgridToolkit::APIError, response['error'])
       end
       response
     end
 
-    def get_credentials
-      {:api_user => @api_user, :api_key => @api_key}
-    end
-
-    private
     def has_error?(response)
       response.kind_of?(Hash) && response.has_key?('error')
     end

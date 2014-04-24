@@ -14,6 +14,7 @@ require 'sendgrid_toolkit/subuser_filters'
 require 'sendgrid_toolkit/subuser_ip_management'
 require 'sendgrid_toolkit/subuser_whitelabel'
 require 'sendgrid_toolkit/subuser_management'
+require 'sendgrid_toolkit/filters'
 
 module SendgridToolkit
   BASE_URI = "sendgrid.com/api"
