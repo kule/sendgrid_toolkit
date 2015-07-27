@@ -1,5 +1,5 @@
 module SendgridToolkit
-  module WhitelabelDomains
+  class WhitelabelDomains < AbstractSendgridClient
     def initialize(api_user = nil, api_key = nil)
       super
       @base_uri = BASE_URI_V3

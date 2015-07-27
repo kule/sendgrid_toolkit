@@ -64,7 +64,7 @@ module SendgridToolkit
     end
 
     def make_v3_request(request_type, module_name, action_name, opts)
-      url = "https://#{[@base_uri, module_name, action_name].join('/')}"
+      url = "https://#{[@base_uri, module_name, action_name].compact.join('/')}"
       auth_token = Base64.encode64("#{@api_user}:#{@api_key}")
       if request_type == :get
         params = {:query => opts}

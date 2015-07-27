@@ -1,10 +1,10 @@
 module SendgridToolkit
-  module WhitelabelIps
+  class WhitelabelIps < AbstractSendgridClient
     def initialize(api_user = nil, api_key = nil)
       super
       @base_uri = BASE_URI_V3
     end
-    
+
     def retrieve_whitelabel_ips(options = {})
       api_get('whitelabel', 'ips', options)
     end
@@ -17,7 +17,7 @@ module SendgridToolkit
       api_delete('whitelabel', "ips/#{id}")
     end
 
-    def retrieve_whitelabel_ips(id)
+    def retrieve_whitelabel_ip(id)
       api_get('whitelabel', "ips/#{id}")
     end
   end

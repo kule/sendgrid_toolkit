@@ -1,10 +1,10 @@
 module SendgridToolkit
-  module WhitelabelLinks
+  class WhitelabelLinks < AbstractSendgridClient
     def initialize(api_user = nil, api_key = nil)
       super
       @base_uri = BASE_URI_V3
     end
-    
+
     def retrieve_whitelabel_links(options = {})
       api_get('whitelabel', 'links', options)
     end
