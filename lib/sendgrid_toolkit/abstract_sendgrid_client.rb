@@ -21,6 +21,18 @@ module SendgridToolkit
       make_request(:post, module_name, action_name, opts)
     end
 
+    def api_put(module_name, action_name, opts = {})
+      make_request(:post, module_name, action_name, opts)
+    end
+
+    def api_patch(module_name, action_name, opts = {})
+      make_request(:patch, module_name, action_name, opts)
+    end
+
+    def api_delete(module_name, action_name, opts = {})
+      make_request(:delete, module_name, action_name, opts)
+    end
+
     def get_credentials
       {:api_user => @api_user, :api_key => @api_key}
     end
@@ -28,14 +40,9 @@ module SendgridToolkit
     private
 
     def make_request(request_type, module_name, action_name, opts)
-      url = "https://#{@base_uri}/#{module_name}.#{action_name}.json?"
-      if request_type == :get
-        response = HTTParty.get(url, :query => get_credentials.merge(opts), :format => :json)
-      else
-        response = HTTParty.post(url, :query => get_credentials.merge(opts), :format => :json)
-      end
+      response, url = get_response_and_url(request_type, module_name, action_name, opts)
       if response.code > 401
-        raise(SendgridToolkit::SendgridServerError, "The sengrid server returned an error. #{response.inspect}")
+        raise(SendgridToolkit::SendgridServerError, "The sendgrid server returned an error. #{response.inspect}")
       elsif has_error?(response) and
           response['error'].respond_to?(:has_key?) and
           response['error'].has_key?('code') and
@@ -46,6 +53,32 @@ module SendgridToolkit
         raise(SendgridToolkit::APIError, response['error'])
       end
       response
+    end
+
+    def get_response_and_url(request_type, module_name, action_name, opts)
+      if @base_uri == BASE_URI_V3
+        make_v3_request(request_type, module_name, action_name, opts)
+      else
+        make_v2_request(request_type, module_name, action_name, opts)
+      end
+    end
+
+    def make_v3_request(request_type, module_name, action_name, opts)
+      url = "https://#{[@base_uri, module_name, action_name].join('/')}"
+      auth_token = Base64.encode64("#{@api_user}:#{@api_key}")
+      if request_type == :get
+        params = {:query => opts}
+      else
+        params = {:body => opts}
+      end
+      response = HTTParty.send(request_type, url, params.merge({ headers: {"Authorization"=>"Basic #{auth_token}" }, :format => :json }))
+      return response, url
+    end
+
+    def make_v2_request(request_type, module_name, action_name, opts)
+      url = "https://#{@base_uri}/#{module_name}.#{action_name}.json?"
+      response = HTTParty.send(request_type, url, :query => get_credentials.merge(opts), :format => :json)
+      return response, url
     end
 
     def has_error?(response)
