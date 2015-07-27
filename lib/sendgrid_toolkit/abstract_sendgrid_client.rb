@@ -52,6 +52,7 @@ module SendgridToolkit
         puts url + get_credentials.merge(opts).map{|k,v| "#{k}=#{v}"}.join('&')
         raise(SendgridToolkit::APIError, response['error'])
       end
+      puts url + get_credentials.merge(opts).map{|k,v| "#{k}=#{v}"}.join('&')
       response
     end
 
@@ -69,7 +70,7 @@ module SendgridToolkit
       if request_type == :get
         params = {:query => opts}
       else
-        params = {:body => opts}
+        params = {:body => opts.to_json}
       end
       response = HTTParty.send(request_type, url, params.merge({ headers: {"Authorization"=>"Basic #{auth_token}" }, :format => :json }))
       return response, url
