@@ -3,7 +3,7 @@ module SendgridToolkit
 
     def initialize(api_user = nil, api_key = nil)
       @base_uri = BASE_URI
-      
+
       @api_user = (api_user.nil?) ? ENV['SMTP_USERNAME'] : api_user
       @api_key = (api_key.nil?) ? ENV['SMTP_PASSWORD'] : api_key
 
@@ -83,7 +83,7 @@ module SendgridToolkit
     end
 
     def has_error?(response)
-      response.kind_of?(Hash) && response.has_key?('error')
+      response.parsed_response.kind_of?(Hash) && response.parsed_response.has_key?('error')
     end
   end
 end
